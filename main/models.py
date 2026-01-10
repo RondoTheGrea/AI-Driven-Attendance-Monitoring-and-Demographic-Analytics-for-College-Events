@@ -51,7 +51,7 @@ class Student(models.Model):
         verbose_name_plural = "Students"
     
 
-# Organization Model(like CCS, CES and etc)
+# Organization Model(like CES, CECS and etc)
 class Organization(models.Model):
 
     # The organization's user account
@@ -120,7 +120,7 @@ class AIInsight(models.Model):
     # The Link (allows many insights per event)
     event = models.ForeignKey('Event', on_delete=models.CASCADE, related_name='ai_insights')
     
-    # Categorization
+    # Categorization of the insight types
     INSIGHT_TYPES = [
         ('prediction', 'Future Prediction'),
         ('attendance', 'Attendance Analysis'),

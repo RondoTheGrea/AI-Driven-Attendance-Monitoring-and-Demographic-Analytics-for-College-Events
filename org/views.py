@@ -50,7 +50,16 @@ def org_page(request):
         messages.error(request, 'You do not have permission to access the organization dashboard.')
         return redirect('home')
     
-    return render(request, 'org/dashboard.html')
+    # Fetch all students in the organization
+    students = Student.objects.filter(organization=organization).order_by('last_name', 'first_name')
+    
+    context = {
+        'organization': organization,
+        'students': students,
+        'total_students': students.count()
+    }
+    
+    return render(request, 'org/dashboard.html', context)
 
 def org_logout(request):
     logout(request)
