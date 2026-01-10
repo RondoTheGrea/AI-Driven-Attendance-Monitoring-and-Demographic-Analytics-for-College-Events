@@ -12,6 +12,15 @@ class Student(models.Model):
     email = models.EmailField()
     course = models.CharField(max_length=100)
     year_level = models.IntegerField()
+
+    # Owning organization (flexible: optional, many students per organization)
+    organization = models.ForeignKey(
+        'Organization',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='students'
+    )
     
     # User Account (Phase 2 - Created later, optional at first)
     user = models.OneToOneField(
