@@ -37,8 +37,10 @@ class Student(models.Model):
         verbose_name = "Student"
         verbose_name_plural = "Students"
     
-class Organizer(models.Model):
-    # Link to Django's built-in User model (for login)
+# Organization Model(like CCS, CES and etc)
+class Organization(models.Model):
+
+    # The organization's user account
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     
     # Organization details
@@ -57,5 +59,5 @@ class Organizer(models.Model):
     
     class Meta:
         ordering = ['organization_name']
-        verbose_name = "Organizer"
-        verbose_name_plural = "Organizers"
+        verbose_name = "Organization"
+        verbose_name_plural = "Organizations"

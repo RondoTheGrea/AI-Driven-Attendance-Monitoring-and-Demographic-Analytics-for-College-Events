@@ -1,15 +1,15 @@
 from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import redirect, render
 from django.contrib import messages
-from main.models import Organizer, Student
+from main.models import Organization, Student
 
 def org_login(request):
     # If already logged in, redirect to appropriate dashboard
     if request.user.is_authenticated:
         try:
-            request.user.organizer
+            request.user.organization
             return redirect('org-page')
-        except Organizer.DoesNotExist:
+        except Organization.DoesNotExist:
             try:
                 request.user.student
                 return redirect('student-page')
@@ -23,8 +23,14 @@ def org_login(request):
         user = authenticate(request, username=username, password=password)
 
         if user is not None:
-            login(request, user)
-            return redirect('org-page')
+            # Verify the user actually has an Organizer profile
+            try:
+                organization = user.organization
+                login(request, user)
+                return redirect('org-page')
+            except Organization.DoesNotExist:
+                messages.error(request, 'This account is not associated with an organization. Please use the student login.')
+                return redirect('home')
 
         messages.error(request, 'Invalid organization credentials.')
         return redirect('home')
@@ -33,6 +39,17 @@ def org_login(request):
     return redirect('home')
 
 def org_page(request):
+    # Verify user is actually an organizer (security check)
+    if not request.user.is_authenticated:
+        messages.error(request, 'Please login to access the organization dashboard.')
+        return redirect('home')
+    
+    try:
+        organization = request.user.organization
+    except Organization.DoesNotExist:
+        messages.error(request, 'You do not have permission to access the organization dashboard.')
+        return redirect('home')
+    
     return render(request, 'org/dashboard.html')
 
 def org_logout(request):

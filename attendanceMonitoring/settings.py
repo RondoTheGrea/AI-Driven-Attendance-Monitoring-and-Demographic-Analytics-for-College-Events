@@ -121,8 +121,8 @@ STATIC_URL = 'static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 # Session configuration
-# Sessions persist for 2 weeks by default (1209600 seconds)
+# Sessions persist for 1 day by default (86400 seconds)
 # Users will remain logged in until they logout or the session expires
-SESSION_COOKIE_AGE = 1209600  # 2 weeks in seconds
+SESSION_COOKIE_AGE = 86400  # 1 day in seconds
 SESSION_SAVE_EVERY_REQUEST = False  # Only save session when modified
 SESSION_EXPIRE_AT_BROWSER_CLOSE = False  # Session persists after browser closes
