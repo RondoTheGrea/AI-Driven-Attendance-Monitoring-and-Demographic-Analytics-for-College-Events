@@ -13,9 +13,9 @@ class StudentAccountCreationAdmin(admin.ModelAdmin):
     """
     Custom admin interface for Student model with account creation functionality
     """
-    list_display = ('student_id', 'first_name', 'last_name', 'email', 'course', 'organization', 'get_username', 'account_status')
+    list_display = ('student_id', 'rfid_uid', 'first_name', 'last_name', 'email', 'course', 'organization', 'get_username', 'account_status')
     list_filter = ('account_created', 'year_level', 'course', 'organization')
-    search_fields = ('student_id', 'first_name', 'last_name', 'email')
+    search_fields = ('student_id', 'rfid_uid', 'first_name', 'last_name', 'email')
     readonly_fields = ('rfid_uid', 'created_at', 'updated_at', 'account_created_date')
     
     fieldsets = (

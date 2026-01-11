@@ -5,5 +5,110 @@
     </div>
 
     <div class="overview-container">
-        <!-- Overview content will be added here -->
+        <!-- Statistics Grid -->
+        <div class="stats-section">
+            <div class="stat-card">
+                <div class="stat-icon">👥</div>
+                <div class="stat-content">
+                    <div class="stat-label">Total Attendees</div>
+                    <div class="stat-value">-</div>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon">✅</div>
+                <div class="stat-content">
+                    <div class="stat-label">Today's Attendees</div>
+                    <div class="stat-value">-</div>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon">📋</div>
+                <div class="stat-content">
+                    <div class="stat-label">Today's Check-ins</div>
+                    <div class="stat-value">-</div>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon">📅</div>
+                <div class="stat-content">
+                    <div class="stat-label">Total Events</div>
+                    <div class="stat-value">-</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Live Event Section -->
+        <div class="live-event-section">
+            <div class="live-event-header">
+                <h3>🔴 Live Event</h3>
+                {% if active_event %}
+                <div class="live-event-meta">
+                    <span class="live-event-title">{{ active_event.title }}</span>
+                    <span class="live-event-time">{{ active_event.start_time|time:"H:i" }} - {{ active_event.end_time|time:"H:i" }}</span>
+                </div>
+                {% else %}
+                <div class="live-event-meta empty">No event currently live.</div>
+                {% endif %}
+            </div>
+
+            <div class="live-feed">
+                {% if active_event %}
+                <div class="live-feed-list" id="attendance-feed" data-event-id="{{ active_event.id }}">
+                    {% for log in recent_logs %}
+                    <div class="feed-item">
+                        <div class="feed-time">{{ log.timestamp|time:"H:i:s" }}</div>
+                        <div class="feed-info">
+                            <strong>{{ log.student.first_name }} {{ log.student.last_name }}</strong>
+                            <span class="feed-note">Checked in</span>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="empty-feed">Start an event to see live check-ins.</div>
+                {% endif %}
+            </div>
+        </div>
     </div>
+</div>
+
+<script>
+// Direct SSE connection for live attendance updates
+const feedContainer = document.getElementById('attendance-feed');
+if (feedContainer) {
+    const eventId = feedContainer.getAttribute('data-event-id');
+    const sseUrl = `/org/api/attendance-stream/${eventId}/`;
+    const eventSource = new EventSource(sseUrl);
+    
+    eventSource.addEventListener('message', function(e) {
+        try {
+            const data = JSON.parse(e.data);
+            
+            // Skip establishment message
+            if (data.student_name === 'Connection established') {
+                return;
+            }
+            
+            const item = document.createElement('div');
+            item.className = 'feed-item';
+            item.innerHTML = `
+                <div class="feed-time">${data.timestamp}</div>
+                <div class="feed-info">
+                    <strong>${data.student_name}</strong>
+                    <span class="feed-note">Checked in</span>
+                </div>
+            `;
+            feedContainer.insertBefore(item, feedContainer.firstChild);
+            
+            while (feedContainer.children.length > 50) {
+                feedContainer.removeChild(feedContainer.lastChild);
+            }
+        } catch (err) {
+            console.error('Error parsing SSE data:', err);
+        }
+    }, false);
+}
+</script>

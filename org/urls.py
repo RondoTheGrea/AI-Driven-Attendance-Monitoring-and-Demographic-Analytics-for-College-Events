@@ -13,4 +13,7 @@ urlpatterns = [
     path('dashboard/events/create/', views.org_dashboard_events_create, name='org-dashboard-events-create'),
     path('dashboard/reports/', views.org_dashboard_reports, name='org-dashboard-reports'),
     path('dashboard/settings/', views.org_dashboard_settings, name='org-dashboard-settings'),
+    
+    # SSE endpoint for real-time attendance updates
+    path('api/attendance-stream/<int:event_id>/', views.attendance_stream, name='attendance-stream'),
 ]
