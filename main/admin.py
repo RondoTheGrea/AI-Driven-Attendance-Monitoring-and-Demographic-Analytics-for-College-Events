@@ -6,7 +6,7 @@ from django.utils import timezone
 import secrets
 import string
 
-from .models import Organization, Student
+from .models import Organization, Student, Event, Attendance, AIInsight
 
 
 class StudentAccountCreationAdmin(admin.ModelAdmin):
@@ -109,6 +109,7 @@ class StudentAccountCreationAdmin(admin.ModelAdmin):
     
     create_accounts_for_selected.short_description = '✓ Create login accounts for selected students'
     
+    # The next two methods are for creating unique usernames and secure temporary passwords for seeding accounts.
     @staticmethod
     def _generate_username(student):
         """Generate a unique username based on student_id"""
@@ -142,6 +143,46 @@ class OrganizationAdmin(admin.ModelAdmin):
     get_username.short_description = 'Username'
 
 
+# Event Admin
+class AttendanceInline(admin.TabularInline):
+    model = Attendance
+    extra = 0
+    fields = ('student', 'timestamp')
+    readonly_fields = ('timestamp',)
+
+
+class EventAdmin(admin.ModelAdmin):
+    list_display = ('title', 'organization', 'event_date', 'start_time', 'end_time', 'is_active', 'participation_number')
+    list_filter = ('is_active', 'event_date', 'organization')
+    search_fields = ('title', 'description')
+    readonly_fields = ('created_at',)
+    inlines = [AttendanceInline]
+    
+    def participation_number(self, obj):
+        count = obj.logs.count()
+        return mark_safe(f'<strong>{count}</strong> participants')
+    participation_number.short_description = 'Participation'
+
+
+# Attendance Admin
+class AttendanceAdmin(admin.ModelAdmin):
+    list_display = ('student', 'event', 'timestamp')
+    list_filter = ('event', 'timestamp')
+    search_fields = ('student__student_id', 'student__first_name', 'event__title')
+    readonly_fields = ('timestamp',)
+
+
+# AI Insight Admin
+class AIInsightAdmin(admin.ModelAdmin):
+    list_display = ('title', 'event', 'type', 'score', 'created_at')
+    list_filter = ('type', 'event', 'created_at')
+    search_fields = ('title', 'content')
+    readonly_fields = ('created_at',)
+
+
 # Register models with custom admin
 admin.site.register(Student, StudentAccountCreationAdmin)
 admin.site.register(Organization, OrganizationAdmin)
+admin.site.register(Event, EventAdmin)
+admin.site.register(Attendance, AttendanceAdmin)
+admin.site.register(AIInsight, AIInsightAdmin)
