@@ -1,0 +1,302 @@
+[
+  {
+    "model": "main.student",
+    "pk": 1,
+    "fields": {
+      "rfid_uid": "E2004105",
+      "student_id": "2024-0001",
+      "first_name": "Marcus",
+      "last_name": "Aurelius",
+      "middle_name": "Stoic",
+      "email": "marcus@example.com",
+      "course": "CS",
+      "year_level": 1,
+      "organization": null,
+      "user": null,
+      "account_created": false,
+      "account_created_date": null,
+      "created_at": "2026-01-01T00:00:00Z",
+      "updated_at": "2026-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "main.student",
+    "pk": 2,
+    "fields": {
+      "rfid_uid": "A1B2C3D4",
+      "student_id": "2024-0002",
+      "first_name": "Ada",
+      "last_name": "Lovelace",
+      "middle_name": "Byron",
+      "email": "ada@example.com",
+      "course": "IT",
+      "year_level": 2,
+      "organization": null,
+      "user": null,
+      "account_created": false,
+      "account_created_date": null,
+      "created_at": "2026-01-01T00:00:00Z",
+      "updated_at": "2026-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "main.student",
+    "pk": 3,
+    "fields": {
+      "rfid_uid": "F5E6D7C8",
+      "student_id": "2024-0003",
+      "first_name": "Grace",
+      "last_name": "Hopper",
+      "middle_name": "Brewster",
+      "email": "grace@example.com",
+      "course": "ACT",
+      "year_level": 3,
+      "organization": null,
+      "user": null,
+      "account_created": false,
+      "account_created_date": null,
+      "created_at": "2026-01-01T00:00:00Z",
+      "updated_at": "2026-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "main.student",
+    "pk": 4,
+    "fields": {
+      "rfid_uid": "99887766",
+      "student_id": "2024-0004",
+      "first_name": "Alan",
+      "last_name": "Turing",
+      "middle_name": "Math",
+      "email": "alan@example.com",
+      "course": "IS",
+      "year_level": 4,
+      "organization": null,
+      "user": null,
+      "account_created": false,
+      "account_created_date": null,
+      "created_at": "2026-01-01T00:00:00Z",
+      "updated_at": "2026-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "main.student",
+    "pk": 5,
+    "fields": {
+      "rfid_uid": "B0A1S2I3",
+      "student_id": "2024-0005",
+      "first_name": "Linus",
+      "last_name": "Torvalds",
+      "middle_name": "Kernel",
+      "email": "linus@example.com",
+      "course": "CS",
+      "year_level": 2,
+      "organization": null,
+      "user": null,
+      "account_created": false,
+      "account_created_date": null,
+      "created_at": "2026-01-01T00:00:00Z",
+      "updated_at": "2026-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "main.student",
+    "pk": 6,
+    "fields": {
+      "rfid_uid": "C7D8E9F0",
+      "student_id": "2024-0006",
+      "first_name": "Margaret",
+      "last_name": "Hamilton",
+      "middle_name": "Heafield",
+      "email": "margaret@example.com",
+      "course": "CS",
+      "year_level": 3,
+      "organization": null,
+      "user": null,
+      "account_created": false,
+      "account_created_date": null,
+      "created_at": "2026-01-01T00:00:00Z",
+      "updated_at": "2026-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "main.student",
+    "pk": 7,
+    "fields": {
+      "rfid_uid": "11223344",
+      "student_id": "2024-0007",
+      "first_name": "Dennis",
+      "last_name": "Ritchie",
+      "middle_name": "MacAlistair",
+      "email": "dennis@example.com",
+      "course": "IT",
+      "year_level": 4,
+      "organization": null,
+      "user": null,
+      "account_created": false,
+      "account_created_date": null,
+      "created_at": "2026-01-01T00:00:00Z",
+      "updated_at": "2026-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "main.student",
+    "pk": 8,
+    "fields": {
+      "rfid_uid": "55667788",
+      "student_id": "2024-0008",
+      "first_name": "Katherine",
+      "last_name": "Johnson",
+      "middle_name": "Coleman",
+      "email": "katherine@example.com",
+      "course": "ACT",
+      "year_level": 2,
+      "organization": null,
+      "user": null,
+      "account_created": false,
+      "account_created_date": null,
+      "created_at": "2026-01-01T00:00:00Z",
+      "updated_at": "2026-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "main.student",
+    "pk": 9,
+    "fields": {
+      "rfid_uid": "AABBCCDD",
+      "student_id": "2024-0009",
+      "first_name": "Tim",
+      "last_name": "Berners-Lee",
+      "middle_name": "John",
+      "email": "tim@example.com",
+      "course": "CS",
+      "year_level": 1,
+      "organization": null,
+      "user": null,
+      "account_created": false,
+      "account_created_date": null,
+      "created_at": "2026-01-01T00:00:00Z",
+      "updated_at": "2026-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "main.student",
+    "pk": 10,
+    "fields": {
+      "rfid_uid": "EEFF0011",
+      "student_id": "2024-0010",
+      "first_name": "Barbara",
+      "last_name": "Liskov",
+      "middle_name": "Jane",
+      "email": "barbara@example.com",
+      "course": "IS",
+      "year_level": 3,
+      "organization": null,
+      "user": null,
+      "account_created": false,
+      "account_created_date": null,
+      "created_at": "2026-01-01T00:00:00Z",
+      "updated_at": "2026-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "main.student",
+    "pk": 11,
+    "fields": {
+      "rfid_uid": "22334455",
+      "student_id": "2024-0011",
+      "first_name": "Bjarne",
+      "last_name": "Stroustrup",
+      "middle_name": "Anders",
+      "email": "bjarne@example.com",
+      "course": "CS",
+      "year_level": 4,
+      "organization": null,
+      "user": null,
+      "account_created": false,
+      "account_created_date": null,
+      "created_at": "2026-01-01T00:00:00Z",
+      "updated_at": "2026-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "main.student",
+    "pk": 12,
+    "fields": {
+      "rfid_uid": "66778899",
+      "student_id": "2024-0012",
+      "first_name": "Frances",
+      "last_name": "Allen",
+      "middle_name": "Elizabeth",
+      "email": "frances@example.com",
+      "course": "IT",
+      "year_level": 1,
+      "organization": null,
+      "user": null,
+      "account_created": false,
+      "account_created_date": null,
+      "created_at": "2026-01-01T00:00:00Z",
+      "updated_at": "2026-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "main.student",
+    "pk": 13,
+    "fields": {
+      "rfid_uid": "AABBDDEE",
+      "student_id": "2024-0013",
+      "first_name": "Donald",
+      "last_name": "Knuth",
+      "middle_name": "Ervin",
+      "email": "donald@example.com",
+      "course": "CS",
+      "year_level": 2,
+      "organization": null,
+      "user": null,
+      "account_created": false,
+      "account_created_date": null,
+      "created_at": "2026-01-01T00:00:00Z",
+      "updated_at": "2026-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "main.student",
+    "pk": 14,
+    "fields": {
+      "rfid_uid": "11335577",
+      "student_id": "2024-0014",
+      "first_name": "Hedy",
+      "last_name": "Lamarr",
+      "middle_name": "Eva",
+      "email": "hedy@example.com",
+      "course": "ACT",
+      "year_level": 3,
+      "organization": null,
+      "user": null,
+      "account_created": false,
+      "account_created_date": null,
+      "created_at": "2026-01-01T00:00:00Z",
+      "updated_at": "2026-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "main.student",
+    "pk": 15,
+    "fields": {
+      "rfid_uid": "99AABBCC",
+      "student_id": "2024-0015",
+      "first_name": "John",
+      "last_name": "McCarthy",
+      "middle_name": "Patrick",
+      "email": "john@example.com",
+      "course": "IS",
+      "year_level": 4,
+      "organization": null,
+      "user": null,
+      "account_created": false,
+      "account_created_date": null,
+      "created_at": "2026-01-01T00:00:00Z",
+      "updated_at": "2026-01-01T00:00:00Z"
+    }
+  }
+]
