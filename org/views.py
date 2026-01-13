@@ -232,14 +232,14 @@ def org_dashboard_events_create(request):
     return render(request, 'org/events/create.html')
 
 @login_required(login_url='home')
-def org_dashboard_reports(request):
-    """HTMX endpoint for Reports tab"""
+def org_dashboard_insights(request):
+    """HTMX endpoint for Insights tab"""
     try:
         organization = request.user.organization
     except Organization.DoesNotExist:
         return redirect('home')
     
-    return render(request, 'org/reports/reports.html')
+    return render(request, 'org/insights/insights.html')
 
 @login_required(login_url='home')
 def org_dashboard_settings(request):

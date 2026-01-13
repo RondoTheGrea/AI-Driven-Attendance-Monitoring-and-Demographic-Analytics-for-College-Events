@@ -11,7 +11,7 @@ urlpatterns = [
     path('dashboard/overview/', views.org_dashboard_overview, name='org-dashboard-overview'),
     path('dashboard/events/', views.org_dashboard_events, name='org-dashboard-events'),
     path('dashboard/events/create/', views.org_dashboard_events_create, name='org-dashboard-events-create'),
-    path('dashboard/reports/', views.org_dashboard_reports, name='org-dashboard-reports'),
+    path('dashboard/insights/', views.org_dashboard_insights, name='org-dashboard-insights'),
     path('dashboard/settings/', views.org_dashboard_settings, name='org-dashboard-settings'),
     
     # SSE endpoint for real-time attendance updates
