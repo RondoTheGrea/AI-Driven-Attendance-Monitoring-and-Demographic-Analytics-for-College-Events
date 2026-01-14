@@ -3,7 +3,7 @@
     "model": "main.event",
     "pk": 1,
     "fields": {
-      "organization": 2,
+      "organization": 1,
       "title": "Main Tech Workshop",
       "description": "Intro to RFID and AI Integration.",
       "event_date": "2026-01-12",
