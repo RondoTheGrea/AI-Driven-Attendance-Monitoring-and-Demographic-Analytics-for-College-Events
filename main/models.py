@@ -141,3 +141,32 @@ class AIInsight(models.Model):
 
     def __str__(self):
         return f"{self.type} for {self.event.title}"
+
+# Chat Message Model for AI Insights
+class ChatMessage(models.Model):
+    # Link to the organization user
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='chat_messages')
+    organization = models.ForeignKey('Organization', on_delete=models.CASCADE, related_name='chat_messages')
+    
+    # Message content
+    message = models.TextField()
+    is_user_message = models.BooleanField(default=True)  # True for user, False for bot
+    
+    # Session tracking (matches Django session ID)
+    session_id = models.CharField(max_length=100, db_index=True)
+    
+    # Timestamps
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        ordering = ['created_at']
+        verbose_name = "Chat Message"
+        verbose_name_plural = "Chat Messages"
+        indexes = [
+            models.Index(fields=['user', 'session_id', 'created_at']),
+        ]
+    
+    def __str__(self):
+        sender = "User" if self.is_user_message else "Bot"
+        preview = self.message[:50] + "..." if len(self.message) > 50 else self.message
+        return f"{sender}: {preview}"

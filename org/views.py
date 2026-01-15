@@ -10,7 +10,7 @@ from datetime import datetime
 import time
 import json
 import requests
-from main.models import Organization, Student, Event, Attendance
+from main.models import Organization, Student, Event, Attendance, ChatMessage
 
 def org_login(request):
     # If already logged in, redirect to appropriate dashboard
@@ -361,12 +361,33 @@ def chat_message(request):
             # 'X-API-KEY': N8N_API_KEY,
         }
         
+        # Get recent chat history for context (last 10 messages)
+        recent_messages = ChatMessage.objects.filter(
+            user=request.user,
+            session_id=session_id
+        ).order_by('-created_at')[:10]
+        
+        # Build conversation history for n8n
+        conversation_history = []
+        for msg in reversed(recent_messages):  # Reverse to get chronological order
+            conversation_history.append({
+                'role': 'user' if msg.is_user_message else 'assistant',
+                'content': msg.message
+            })
+        
+        # Add current message to history
+        conversation_history.append({
+            'role': 'user',
+            'content': user_message
+        })
+        
         payload = {
             'message': user_message,
             'sessionId': session_id,  # For n8n memory
             'organization_id': organization.id,
             'organization_name': organization.organization_name,
             'user_id': request.user.id,
+            'conversation_history': conversation_history,  # Send history for better context
         }
         
         # Send request to n8n webhook
@@ -378,6 +399,15 @@ def chat_message(request):
                 timeout=30  # 30 second timeout
             )
             response.raise_for_status()
+            
+            # Save user message to database
+            ChatMessage.objects.create(
+                user=request.user,
+                organization=organization,
+                message=user_message,
+                is_user_message=True,
+                session_id=session_id
+            )
             
             # Parse n8n response
             n8n_data = response.json()
@@ -398,6 +428,15 @@ def chat_message(request):
             else:
                 # If it's just a string
                 bot_reply = str(n8n_data)
+            
+            # Save bot reply to database
+            ChatMessage.objects.create(
+                user=request.user,
+                organization=organization,
+                message=bot_reply,
+                is_user_message=False,
+                session_id=session_id
+            )
             
             return JsonResponse({
                 'reply': bot_reply,
