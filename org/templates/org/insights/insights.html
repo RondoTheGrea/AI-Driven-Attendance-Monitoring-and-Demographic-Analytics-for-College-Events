@@ -753,8 +753,14 @@
             }
             
             // Update UI
-            document.getElementById('currentChatTitle').textContent = session ? session.title : 'New Chat';
+            const titleEl = document.getElementById('currentChatTitle');
+            if (titleEl) {
+                titleEl.textContent = session ? session.title : 'New Chat';
+            }
             updateChatSessionsList();
+            
+            // Mark as initialized
+            chatMessages.setAttribute('data-initialized', 'true');
             
             // Auto scroll to bottom
             setTimeout(() => {
@@ -974,34 +980,88 @@
             return div.innerHTML;
         }
 
-        // Allow Enter key to send message
-        document.getElementById('messageInput').addEventListener('keypress', function(event) {
+        // Initialize chat interface (can be called multiple times safely)
+        function initializeChatInterface() {
+            // Wait a tiny bit for DOM to be ready
+            setTimeout(() => {
+                const messageInput = document.getElementById('messageInput');
+                const chatMessages = document.getElementById('chatMessages');
+                
+                if (!messageInput || !chatMessages) {
+                    console.log('Chat elements not found, will retry...');
+                    return;
+                }
+                
+                // Set up Enter key handler (remove existing first to avoid duplicates)
+                messageInput.removeEventListener('keypress', handleEnterKey);
+                messageInput.addEventListener('keypress', handleEnterKey);
+                
+                // Load current chat ID from localStorage or create new one
+                currentChatId = localStorage.getItem(CURRENT_CHAT_ID_KEY);
+                const sessions = getAllChatSessions();
+                
+                if (currentChatId && sessions[currentChatId]) {
+                    loadChatSession(currentChatId);
+                } else {
+                    // Try to load the most recent session
+                    const sessionsArray = Object.values(sessions).sort((a, b) => {
+                        return new Date(b.updatedAt) - new Date(a.updatedAt);
+                    });
+                    
+                    if (sessionsArray.length > 0) {
+                        loadChatSession(sessionsArray[0].id);
+                    } else {
+                        createNewChat();
+                    }
+                }
+                
+                updateChatSessionsList();
+            }, 50);
+        }
+        
+        // Handle Enter key press
+        function handleEnterKey(event) {
             if (event.key === 'Enter') {
                 sendMessage();
             }
-        });
+        }
 
-        // Initialize on page load
-        document.addEventListener('DOMContentLoaded', function() {
-            // Load current chat ID from localStorage or create new one
-            currentChatId = localStorage.getItem(CURRENT_CHAT_ID_KEY);
-            const sessions = getAllChatSessions();
-            
-            if (currentChatId && sessions[currentChatId]) {
-                loadChatSession(currentChatId);
-            } else {
-                // Try to load the most recent session
-                const sessionsArray = Object.values(sessions).sort((a, b) => {
-                    return new Date(b.updatedAt) - new Date(a.updatedAt);
-                });
-                
-                if (sessionsArray.length > 0) {
-                    loadChatSession(sessionsArray[0].id);
-                } else {
-                    createNewChat();
+        // Initialize on page load (for direct page loads)
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initializeChatInterface);
+        } else {
+            // DOM is already loaded, try to initialize immediately
+            initializeChatInterface();
+        }
+        
+        // Also listen for HTMX swaps - reinitialize when Insights tab is loaded
+        // This works even if the script runs before HTMX swaps
+        if (document.body) {
+            document.body.addEventListener('htmx:afterSwap', function(event) {
+                // Check if the swapped content contains our chat interface
+                if (event.detail.target.id === 'content-area' && event.detail.target.querySelector('#chatMessages')) {
+                    console.log('HTMX swapped Insights tab, initializing chat...');
+                    initializeChatInterface();
                 }
+            });
+        }
+        
+        // Fallback: also check periodically if elements exist (for edge cases)
+        // This ensures initialization even if HTMX events don't fire
+        let initAttempts = 0;
+        const maxInitAttempts = 10;
+        const checkInterval = setInterval(function() {
+            if (document.getElementById('chatMessages') && !document.getElementById('chatMessages').hasAttribute('data-initialized')) {
+                initializeChatInterface();
+                const chatEl = document.getElementById('chatMessages');
+                if (chatEl) {
+                    chatEl.setAttribute('data-initialized', 'true');
+                }
+                clearInterval(checkInterval);
             }
-            
-            updateChatSessionsList();
-        });
+            initAttempts++;
+            if (initAttempts >= maxInitAttempts) {
+                clearInterval(checkInterval);
+            }
+        }, 200);
     </script>

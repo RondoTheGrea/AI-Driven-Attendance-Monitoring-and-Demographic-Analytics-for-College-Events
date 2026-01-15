@@ -73,6 +73,19 @@
             });
         });
 
+        // Listen for HTMX swaps to reinitialize chat interface
+        document.body.addEventListener('htmx:afterSwap', function(event) {
+            // Check if Insights tab was loaded
+            if (event.detail.target.id === 'content-area') {
+                const chatMessages = event.detail.target.querySelector('#chatMessages');
+                if (chatMessages) {
+                    // Chat interface was loaded, trigger initialization
+                    // The insights.html script will handle initialization
+                    console.log('Insights tab loaded, chat should initialize...');
+                }
+            }
+        });
+
         // Load default overview on page load
         document.addEventListener('DOMContentLoaded', function() {
             const defaultTab = document.querySelector('.sidebar-item.active');
