@@ -11,6 +11,7 @@ urlpatterns = [
     path('dashboard/overview/', views.org_dashboard_overview, name='org-dashboard-overview'),
     path('dashboard/events/', views.org_dashboard_events, name='org-dashboard-events'),
     path('dashboard/events/create/', views.org_dashboard_events_create, name='org-dashboard-events-create'),
+    path('dashboard/events/<int:event_id>/report/', views.org_dashboard_event_report, name='org-dashboard-event-report'),
     path('dashboard/insights/', views.org_dashboard_insights, name='org-dashboard-insights'),
     path('dashboard/settings/', views.org_dashboard_settings, name='org-dashboard-settings'),
     

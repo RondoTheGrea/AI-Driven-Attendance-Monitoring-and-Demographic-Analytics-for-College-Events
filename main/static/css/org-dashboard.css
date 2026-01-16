@@ -15,15 +15,14 @@ body {
     display: flex;
     flex-direction: column;
     flex-grow: 1;
-    margin: 1vw;
+    margin: 0;
     padding-left: 5vw;
-    margin-left: 0;
     transition: margin-left 0.5s ease;
 }
 
 #content-area {
     animation: fadeIn 0.3s ease;
-    height: 100vh;      /* match viewport height */
+    height: 100%;      /* fill available space within #main */
     overflow: hidden;   /* internal tabs handle their own scrolling */
 }
 
@@ -184,12 +183,107 @@ body {
     animation: fadeIn 0.3s ease;
 }
 
+/* Events tab should scroll within the dashboard viewport */
+.events-tab {
+    height: calc(100vh - 120px);
+    min-height: 0;
+    overflow-y: auto;
+}
+
+/* Event report layout */
+.event-report-tab {
+    height: calc(100vh - 120px);
+    min-height: 0;
+    overflow-y: auto;
+}
+
+.event-report-header {
+    margin-bottom: 20px;
+}
+
+.event-report-title {
+    margin: 0;
+    font-size: 1.2rem;
+    font-weight: 700;
+}
+
+.event-report-subtitle {
+    margin: 4px 0 0 0;
+    font-size: 0.85rem;
+    color: #666;
+}
+
+.event-report-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.event-report-card {
+    background: #ffffff;
+    border-radius: 8px;
+    padding: 16px 18px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+}
+
+.event-report-card h4 {
+    margin: 0 0 8px 0;
+    font-size: 0.9rem;
+}
+
+.event-report-value {
+    margin: 0;
+    font-size: 1.4rem;
+    font-weight: 700;
+}
+
+.event-report-caption {
+    margin: 4px 0 0 0;
+    font-size: 0.8rem;
+    color: #555;
+}
+
+.event-report-table-wrapper {
+    background: #ffffff;
+    border-radius: 8px;
+    padding: 16px 18px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+}
+
+.event-report-table-wrapper h4 {
+    margin: 0 0 12px 0;
+}
+
+.event-report-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.85rem;
+}
+
+.event-report-table th,
+.event-report-table td {
+    border: 1px solid #e5e7eb;
+    padding: 8px 10px;
+    text-align: left;
+}
+
+.event-report-table th {
+    background-color: #f9fafb;
+    font-weight: 600;
+}
+
+.event-report-empty {
+    font-size: 0.85rem;
+    color: #777;
+}
+
 .content-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 30px;
-    padding-bottom: 20px;
+    padding: 20px 10px 20px 10px;
     border-bottom: 2px solid #e0e0e0;
 }
 
@@ -573,7 +667,7 @@ body {
 }
 
 .live-feed-list {
-    max-height: 320px;
+    max-height: 600px;
     overflow-y: auto;
 }
 
@@ -649,10 +743,11 @@ body {
 .overview-tab {
     display: flex;
     flex-direction: column;
-    gap: 1.5rem;
-    height: calc(100vh - 120px); /* fit into remaining screen below header */
+    gap: 0;
+    height: 100%; /* fill available space */
     min-height: 0; /* allow inner sections to scroll instead of stretching page */
-    overflow: hidden;
+    overflow-y: auto; /* allow vertical scroll so live event sidebar is always reachable */
+    padding: 20px 10px 0 10px;
 }
 
 .overview-title {
@@ -727,27 +822,107 @@ body {
 
 #aib {
     display: flex;
-    flex-grow: 1;
+    flex: 1; /* match #graph flex so both have same width */
     height: 30vh;
     border-radius: 0.5vh;
     background-color: #E9E9F3;
-    padding: 1vh 1vw;
-    align-items: center;
-    justify-content: center;
-    color: #666;
+    padding: 1.5vh 1.25vw;
+    align-items: stretch;
+    justify-content: flex-start;
+    color: #333;
     font-size: 0.9rem;
+}
+
+/* Arrival Pattern Card (Graph 1) */
+.arrival-card {
+    width: 100%;
+    background-color: #ffffff;
+    border-radius: 0.5vh;
+    padding: 1.25vh 1.25vw;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.07);
+}
+
+.arrival-title {
+    margin: 0;
+    font-size: 0.95rem;
+    font-weight: 700;
+}
+
+.arrival-caption,
+.arrival-summary,
+.arrival-empty {
+    margin: 0;
+    font-size: 0.8rem;
+    color: #555;
+}
+
+.arrival-bar-track {
+    width: 100%;
+    height: 0.8rem;
+    border-radius: 999px;
+    background-color: #f1f1f5;
+    overflow: hidden;
+    display: flex;
+}
+
+.arrival-bar-segment {
+    height: 100%;
+}
+
+.arrival-bar-segment.early {
+    background-color: #9AE6B4; /* soft green */
+}
+
+.arrival-bar-segment.on-time {
+    background-color: #63B3ED; /* soft blue */
+}
+
+.arrival-bar-segment.late {
+    background-color: #FC8181; /* soft red */
+}
+
+.arrival-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    align-items: center;
+    font-size: 0.75rem;
+    color: #444;
+}
+
+.arrival-dot {
+    width: 0.7rem;
+    height: 0.7rem;
+    border-radius: 999px;
+    display: inline-block;
+}
+
+.arrival-dot.early {
+    background-color: #9AE6B4;
+}
+
+.arrival-dot.on-time {
+    background-color: #63B3ED;
+}
+
+.arrival-dot.late {
+    background-color: #FC8181;
 }
 
 #graph {
     height: 30vh;
-    flex: 1;
+    flex: 1; /* explicit to mirror #aib */
     min-width: 200px;
     border-radius: 0.5vh;
     border: 0.1vw solid black;
     background-color: #ffffff;
     display: flex;
-    align-items: center;
-    justify-content: center;
+    align-items: stretch;
+    justify-content: flex-start;
+    padding: 1.5vh 1.25vw;
 }
 
 /* Bottom Section */
@@ -756,7 +931,7 @@ body {
     flex-direction: column;
     flex: 1;          /* take remaining space under #top/filter/title */
     min-height: 0;    /* enable internal scroll containers */
-    gap: 1vh;
+    gap: 0;
 }
 
 .flex {
@@ -819,7 +994,7 @@ body {
 
 #as {
     height: auto;
-    padding-top: 1vw;
+    padding-top: 0;
     display: flex;
     flex-direction: row;
     gap: 1vw;
@@ -935,8 +1110,8 @@ aside {
     border: 0.2vh solid #000000;
     background-color: #ffffff;
     padding: 5vh 1vw;
-    height: auto;
-    max-height: 45vh;
+    height: 100%;
+    max-height: calc(100vh - 350px);
     overflow-y: auto;
 }
 
@@ -961,12 +1136,13 @@ aside {
 #list {
     display: flex;
     flex-direction: column;
-    flex-grow: 1;
+    flex: 1;
     height: auto;
     border-radius: 0.5vh;
     padding: 0;
-    gap: 1vh;
-    min-height: 0;    /* so #students can scroll inside */
+    gap: 0.3vh;
+    min-height: 0;
+    max-height: calc(100vh - 350px);
 }
 
 #list > .flex {
@@ -987,7 +1163,8 @@ aside {
     margin: 0;
     display: flex;
     flex-direction: column;
-    flex-grow: 1;
+    flex: 1;
+    max-height: 100%;
     border: 0.2vh solid #000000;
     border-radius: 1vw;
     background-color: #ffffff;
@@ -1021,10 +1198,106 @@ table th {
     display: flex;
     flex-direction: column;
     gap: 1vh;
-    flex-grow: 1;
+    flex: 1;
     margin: 1vh 2vh;
     overflow-y: auto;
-    max-height: 35vh;
+    max-height: 100%;
+}
+
+/* New Student List Styles */
+.search-form {
+    width: 100%;
+    margin-bottom: 1.5rem;
+}
+
+.student-search-input {
+    width: 100%;
+    padding: 14px 18px;
+    font-size: 16px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    background: white;
+}
+
+.student-search-input:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.students-table {
+    width: 100%;
+    margin-bottom: 1rem;
+}
+
+.students-table thead {
+    background: #f8f9fa;
+    border-bottom: 2px solid #e0e0e0;
+}
+
+.students-table th {
+    padding: 16px 20px;
+    text-align: left;
+    font-size: 15px;
+    font-weight: 600;
+    color: #333;
+}
+
+.students-container {
+    flex: 1;
+    overflow-y: auto;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    background: white;
+}
+
+.student-row {
+    display: grid;
+    grid-template-columns: 2fr 1.5fr 2fr;
+    gap: 20px;
+    padding: 10px 20px;
+    border-bottom: 1px solid #f0f0f0;
+    transition: background-color 0.2s ease;
+    align-items: center;
+}
+
+.student-row:hover {
+    background-color: #f8f9fa;
+}
+
+.student-row:last-child {
+    border-bottom: none;
+}
+
+.student-name {
+    font-size: 16px;
+    font-weight: 500;
+    color: #1f2937;
+}
+
+.student-id {
+    font-size: 15px;
+    color: #4b5563;
+    font-family: 'Courier New', monospace;
+}
+
+.student-flag .risk-flag {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.student-flag .risk-label {
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.empty-student-list {
+    padding: 40px 20px;
+    text-align: center;
+    color: #6b7280;
+    font-size: 15px;
 }
 
 #students a {
@@ -1060,6 +1333,75 @@ table th {
 
 .risk-flag p {
     margin: 0;
+}
+
+/* Risk Breakdown Graph (Graph 2) */
+.risk-graph {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.risk-graph h3 {
+    font-size: 0.9rem;
+    font-weight: bold;
+    color: #333;
+    margin: 0;
+}
+
+.risk-graph-caption,
+.risk-graph-summary,
+.risk-graph-empty {
+    font-size: 0.75rem;
+    color: #555;
+    margin: 0;
+}
+
+.risk-bar-row {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+}
+
+.risk-bar-label {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    width: 40%;
+    font-size: 0.75rem;
+}
+
+.risk-bar-track {
+    flex: 1;
+    height: 0.7rem;
+    border-radius: 999px;
+    background-color: #f1f1f5;
+    overflow: hidden;
+}
+
+.risk-bar-fill {
+    height: 100%;
+    border-radius: 999px;
+}
+
+.risk-bar-fill.high-risk {
+    background-color: rgb(202, 92, 92);
+}
+
+.risk-bar-fill.emerging-risk {
+    background-color: rgb(231, 216, 79);
+}
+
+.risk-bar-fill.low-risk {
+    background-color: rgb(99, 202, 73);
+}
+
+.risk-bar-value {
+    min-width: 90px;
+    text-align: right;
+    font-size: 0.75rem;
+    color: #333;
 }
 
 /* Responsive adjustments for overview */

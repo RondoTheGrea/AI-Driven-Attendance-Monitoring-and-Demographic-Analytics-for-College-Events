@@ -6,7 +6,8 @@ from django.utils import timezone
 from django.http import StreamingHttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
-from datetime import datetime
+from django.db import models
+from datetime import datetime, timedelta
 import time
 import json
 import requests
@@ -132,10 +133,248 @@ def org_dashboard_overview(request):
             .order_by('-timestamp')[:50]
         )
 
+    # --- Risk breakdown for Graph 2 ---
+    # We classify students based on their attendance across ALL past events
+    # for this organization using the legend shown in the UI:
+    #   High-risk       = attendance < 70%
+    #   Emerging-risk   = 2+ absences in the last 10 days
+    #   Low-risk        = everyone else (occasional or no absences)
+
+    # Instead of relying on Student.organization (which may be null in fixtures),
+    # we infer the student set from attendance records tied to this organization.
+    students = Student.objects.filter(history__event__organization=organization).distinct()
+    total_students = students.count()
+
+    # Consider only events that have already happened (up to today)
+    today = now.date()
+    completed_events = Event.objects.filter(
+        organization=organization,
+        event_date__lte=today
+    ).order_by('event_date')
+
+    total_events = completed_events.count()
+
+    # Fallback: if this organization has no attendance data yet,
+    # use all events with logs so the graph still shows something
+    # for demo/testing accounts.
+    if total_students == 0 or total_events == 0:
+        completed_events = Event.objects.filter(logs__isnull=False).order_by('event_date').distinct()
+        total_events = completed_events.count()
+        students = Student.objects.filter(history__event__in=completed_events).distinct()
+        total_students = students.count()
+
+    high_risk = 0
+    emerging_risk = 0
+    low_risk = 0
+
+    if total_students:
+        # Events in the last 10 days window (including today)
+        window_start = today - timedelta(days=9)
+        recent_events = completed_events.filter(event_date__gte=window_start)
+
+        all_event_ids = list(completed_events.values_list('id', flat=True))
+        recent_event_ids = list(recent_events.values_list('id', flat=True))
+
+        for student in students:
+            attended_all = Attendance.objects.filter(
+                student=student,
+                event_id__in=all_event_ids
+            ).count()
+
+            attendance_rate = (attended_all * 100.0 / total_events) if total_events else 0.0
+
+            # Absences in the last 10 days
+            if recent_event_ids:
+                attended_recent = Attendance.objects.filter(
+                    student=student,
+                    event_id__in=recent_event_ids
+                ).count()
+                absences_recent = len(recent_event_ids) - attended_recent
+            else:
+                absences_recent = 0
+
+            if attendance_rate < 70.0:
+                high_risk += 1
+            elif absences_recent >= 2:
+                emerging_risk += 1
+            else:
+                # Everyone else is considered low-risk (either
+                # perfect or occasional absences)
+                low_risk += 1
+
+    # Percentages for the graph (avoid division by zero)
+    if total_students:
+        high_pct = round(high_risk * 100.0 / total_students)
+        emerging_pct = round(emerging_risk * 100.0 / total_students)
+        low_pct = round(low_risk * 100.0 / total_students)
+    else:
+        high_pct = emerging_pct = low_pct = 0
+
+    # --- Arrival pattern for Graph 1 (AI Summary box) ---
+    arrival_event = None
+    arrival_stats = {
+        'total': 0,
+        'early': 0,
+        'on_time': 0,
+        'late': 0,
+        'early_percent': 0,
+        'on_time_percent': 0,
+        'late_percent': 0,
+        'median_label': 'No data yet',
+    }
+
+    # Prefer an event for this organization with attendance logs; if none,
+    # fall back to any event that has logs so demo data still shows something.
+    arrival_events_qs = Event.objects.filter(
+        organization=organization,
+        logs__isnull=False
+    ).order_by('-event_date', '-start_time').distinct()
+
+    if not arrival_events_qs.exists():
+        arrival_events_qs = Event.objects.filter(
+            logs__isnull=False
+        ).order_by('-event_date', '-start_time').distinct()
+
+    if arrival_events_qs.exists():
+        arrival_event = arrival_events_qs.first()
+
+        start_dt = datetime.combine(arrival_event.event_date, arrival_event.start_time)
+        if timezone.is_naive(start_dt):
+            start_dt = timezone.make_aware(start_dt, tz)
+
+        attendance_qs = Attendance.objects.filter(event=arrival_event).order_by('timestamp')
+
+        offsets = []  # minutes relative to event start
+        for record in attendance_qs:
+            ts = record.timestamp
+            if timezone.is_naive(ts):
+                ts = timezone.make_aware(ts, tz)
+            diff_minutes = (ts - start_dt).total_seconds() / 60.0
+            offsets.append(diff_minutes)
+
+        total_arrivals = len(offsets)
+        if total_arrivals:
+            early_count = sum(1 for m in offsets if m <= -5)
+            on_time_count = sum(1 for m in offsets if -5 < m <= 10)
+            late_count = sum(1 for m in offsets if m > 10)
+
+            early_pct = round(early_count * 100.0 / total_arrivals)
+            on_time_pct = round(on_time_count * 100.0 / total_arrivals)
+            late_pct = round(late_count * 100.0 / total_arrivals)
+
+            # Median arrival offset in minutes
+            offsets_sorted = sorted(offsets)
+            n = total_arrivals
+            if n % 2 == 1:
+                median_val = offsets_sorted[n // 2]
+            else:
+                median_val = (offsets_sorted[n // 2 - 1] + offsets_sorted[n // 2]) / 2.0
+
+            median_minutes = int(round(median_val))
+            if median_minutes <= -1:
+                median_label = f"{abs(median_minutes)} min before start"
+            elif median_minutes >= 1:
+                median_label = f"{median_minutes} min after start"
+            else:
+                median_label = "right at start"
+
+            arrival_stats = {
+                'total': total_arrivals,
+                'early': early_count,
+                'on_time': on_time_count,
+                'late': late_count,
+                'early_percent': early_pct,
+                'on_time_percent': on_time_pct,
+                'late_percent': late_pct,
+                'median_label': median_label,
+            }
+
+    # --- Student List with AI Flags ---
+    # Load all students for this organization and compute their risk flags
+    search_query = request.GET.get('search', '').strip()
+    
+    # Get students linked to this org's events
+    students_list = Student.objects.filter(
+        history__event__organization=organization
+    ).distinct().order_by('last_name', 'first_name')
+    
+    # If no students found, fall back to all students with attendance records
+    if not students_list.exists():
+        students_list = Student.objects.filter(
+            history__isnull=False
+        ).distinct().order_by('last_name', 'first_name')
+    
+    # Apply search filter
+    if search_query:
+        students_list = students_list.filter(
+            models.Q(first_name__icontains=search_query) |
+            models.Q(last_name__icontains=search_query) |
+            models.Q(student_id__icontains=search_query)
+        )
+    
+    # Compute AI flags for each student
+    students_with_flags = []
+    for student in students_list:
+        attended_all = Attendance.objects.filter(
+            student=student,
+            event_id__in=all_event_ids
+        ).count() if total_events else 0
+        
+        attendance_rate = (attended_all * 100.0 / total_events) if total_events else 100.0
+        
+        # Absences in the last 10 days
+        if recent_event_ids:
+            attended_recent = Attendance.objects.filter(
+                student=student,
+                event_id__in=recent_event_ids
+            ).count()
+            absences_recent = len(recent_event_ids) - attended_recent
+        else:
+            absences_recent = 0
+        
+        # Determine AI flag based on predefined rules:
+        # - High-risk (Chronic): attendance < 70%
+        # - Emerging-risk (At-Risk): 2+ absences in last 10 days
+        # - Low-risk (Good Standing): everyone else
+        if attendance_rate < 70.0:
+            flag = 'high-risk'
+            flag_label = 'Chronic Risk'
+        elif absences_recent >= 2:
+            flag = 'emerging-risk'
+            flag_label = 'At-Risk'
+        else:
+            flag = 'low-risk'
+            flag_label = 'Good Standing'
+        
+        students_with_flags.append({
+            'student': student,
+            'flag': flag,
+            'flag_label': flag_label,
+            'attendance_rate': round(attendance_rate, 1),
+        })
+    
     context = {
         'active_event': active_event,
         'recent_logs': recent_logs,
+        'arrival_event': arrival_event,
+        'arrival_stats': arrival_stats,
+        'risk_counts': {
+            'high': high_risk,
+            'emerging': emerging_risk,
+            'low': low_risk,
+            'high_percent': high_pct,
+            'emerging_percent': emerging_pct,
+            'low_percent': low_pct,
+            'total_students': total_students,
+            'total_events': total_events,
+        },
+        'students_with_flags': students_with_flags,
+        'search_query': search_query,
     }
+
+    # If this is an HTMX request with a search parameter, return just the student list
+    if request.headers.get('HX-Request') and 'search' in request.GET:
+        return render(request, 'org/overview/_student_list.html', context)
 
     return render(request, 'org/overview/overview.html', context)
 
@@ -233,6 +472,107 @@ def org_dashboard_events_create(request):
 
     # GET - return form partial
     return render(request, 'org/events/create.html')
+
+
+@login_required(login_url='home')
+def org_dashboard_event_report(request, event_id):
+    """HTMX endpoint showing an attendance report for a single event."""
+    try:
+        organization = request.user.organization
+    except Organization.DoesNotExist:
+        return redirect('home')
+
+    # Only allow access to events owned by this organization
+    try:
+        event = Event.objects.get(id=event_id, organization=organization)
+    except Event.DoesNotExist:
+        return redirect('home')
+
+    tz = timezone.get_current_timezone()
+
+    # All attendance records for this event
+    attendances = (
+        Attendance.objects
+        .filter(event=event)
+        .select_related('student')
+        .order_by('timestamp')
+    )
+
+    total_attendees = attendances.count()
+
+    # Compute arrival offsets relative to start time
+    start_dt = datetime.combine(event.event_date, event.start_time)
+    if timezone.is_naive(start_dt):
+        start_dt = timezone.make_aware(start_dt, tz)
+
+    offsets = []
+    attendee_rows = []
+
+    for record in attendances:
+        ts = record.timestamp
+        if timezone.is_naive(ts):
+            ts = timezone.make_aware(ts, tz)
+        diff_minutes = (ts - start_dt).total_seconds() / 60.0
+        offsets.append(diff_minutes)
+
+        if diff_minutes <= -5:
+            arrival_bucket = 'Early'
+        elif -5 < diff_minutes <= 10:
+            arrival_bucket = 'On-time'
+        else:
+            arrival_bucket = 'Late'
+
+        attendee_rows.append({
+            'student_name': f"{record.student.first_name} {record.student.last_name}",
+            'student_id': record.student.student_id,
+            'timestamp': ts,
+            'arrival_bucket': arrival_bucket,
+        })
+
+    early_count = on_time_count = late_count = 0
+    if offsets:
+        early_count = sum(1 for m in offsets if m <= -5)
+        on_time_count = sum(1 for m in offsets if -5 < m <= 10)
+        late_count = sum(1 for m in offsets if m > 10)
+
+    if total_attendees:
+        early_pct = round(early_count * 100.0 / total_attendees)
+        on_time_pct = round(on_time_count * 100.0 / total_attendees)
+        late_pct = round(late_count * 100.0 / total_attendees)
+    else:
+        early_pct = on_time_pct = late_pct = 0
+
+    median_label = 'No data yet'
+    if offsets:
+        offsets_sorted = sorted(offsets)
+        n = len(offsets_sorted)
+        if n % 2 == 1:
+            median_val = offsets_sorted[n // 2]
+        else:
+            median_val = (offsets_sorted[n // 2 - 1] + offsets_sorted[n // 2]) / 2.0
+
+        median_minutes = int(round(median_val))
+        if median_minutes <= -1:
+            median_label = f"{abs(median_minutes)} min before start"
+        elif median_minutes >= 1:
+            median_label = f"{median_minutes} min after start"
+        else:
+            median_label = "right at start"
+
+    context = {
+        'event': event,
+        'attendee_rows': attendee_rows,
+        'total_attendees': total_attendees,
+        'early_count': early_count,
+        'on_time_count': on_time_count,
+        'late_count': late_count,
+        'early_percent': early_pct,
+        'on_time_percent': on_time_pct,
+        'late_percent': late_pct,
+        'median_label': median_label,
+    }
+
+    return render(request, 'org/events/report.html', context)
 
 @login_required(login_url='home')
 def org_dashboard_insights(request):

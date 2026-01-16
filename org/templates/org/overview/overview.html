@@ -1,69 +1,108 @@
 <!-- Overview Tab Content -->
 <div class="tab-content overview-tab">
-    <h1 class="overview-title">Dashboard</h1>
-
-    <!-- Filters Section -->
-    <div class="flex filter-row">
-        <h6>AI-Generated Today's Attendance Summary</h6>
-        <div class="umafil">
-            <div class="labeledfilter">
-                <p>Year:</p>
-                <button class="filter">All</button>
-            </div>
-            <div class="labeledfilter">
-                <p>Section:</p>
-                <button class="filter">All</button>
-            </div>
-            <div class="labeledfilter">
-                <p>Modality:</p>
-                <button class="filter">All</button>
-            </div>
-        </div>
+    <div class="content-header">
+        <h2>Dashboard</h2>
     </div>
-
     <!-- Top Section: AI Summary + Graph -->
     <section id="top">
         <section id="aib">
-            <!-- AI Summary Box -->
+            <div class="arrival-card">
+                <h3 class="arrival-title">Arrival Pattern &ndash; Last Event</h3>
+
+                {% if arrival_event %}
+                <p class="arrival-caption">
+                    Based on {{ arrival_event.title }} ({{ arrival_event.event_date|date:"M d, Y" }})
+                </p>
+
+                {% if arrival_stats.total %}
+                <div class="arrival-bar-track">
+                    <div class="arrival-bar-segment early" style="width: {{ arrival_stats.early_percent }}%;"></div>
+                    <div class="arrival-bar-segment on-time" style="width: {{ arrival_stats.on_time_percent }}%;"></div>
+                    <div class="arrival-bar-segment late" style="width: {{ arrival_stats.late_percent }}%;"></div>
+                </div>
+
+                <div class="arrival-legend">
+                    <span class="arrival-dot early"></span>
+                    <span>Early (5+ min before start)</span>
+                    <span class="arrival-dot on-time"></span>
+                    <span>On-time (within 10 min)</span>
+                    <span class="arrival-dot late"></span>
+                    <span>Late (&gt; 10 min after)</span>
+                </div>
+
+                <p class="arrival-summary">
+                    {{ arrival_stats.total }} students checked in; median arrival {{ arrival_stats.median_label }}.
+                </p>
+                {% else %}
+                <p class="arrival-empty">
+                    No check-ins recorded for this event yet.
+                </p>
+                {% endif %}
+                {% else %}
+                <p class="arrival-empty">
+                    No events with attendance data yet.
+                </p>
+                {% endif %}
+            </div>
         </section>
         <section id="graph">
-            <!-- Graph/Chart Box -->
+            <div class="risk-graph">
+                <h3>Risk Breakdown</h3>
+                <p class="risk-graph-caption">
+                    Based on {{ risk_counts.total_events }} past events with attendance data.
+                </p>
+
+                <div class="risk-bar-row">
+                    <div class="risk-bar-label">
+                        <span class="risk-color high-risk"></span>
+                        <span>High-risk (&lt; 70% attendance)</span>
+                    </div>
+                    <div class="risk-bar-track">
+                        <div class="risk-bar-fill high-risk" style="width: {{ risk_counts.high_percent }}%;"></div>
+                    </div>
+                    <span class="risk-bar-value">
+                        {{ risk_counts.high }} ({{ risk_counts.high_percent }}%)
+                    </span>
+                </div>
+
+                <div class="risk-bar-row">
+                    <div class="risk-bar-label">
+                        <span class="risk-color emerging-risk"></span>
+                        <span>Emerging-risk (2+ absences in 10 days)</span>
+                    </div>
+                    <div class="risk-bar-track">
+                        <div class="risk-bar-fill emerging-risk" style="width: {{ risk_counts.emerging_percent }}%;"></div>
+                    </div>
+                    <span class="risk-bar-value">
+                        {{ risk_counts.emerging }} ({{ risk_counts.emerging_percent }}%)
+                    </span>
+                </div>
+
+                <div class="risk-bar-row">
+                    <div class="risk-bar-label">
+                        <span class="risk-color low-risk"></span>
+                        <span>Low-risk (occasional absences)</span>
+                    </div>
+                    <div class="risk-bar-track">
+                        <div class="risk-bar-fill low-risk" style="width: {{ risk_counts.low_percent }}%;"></div>
+                    </div>
+                    <span class="risk-bar-value">
+                        {{ risk_counts.low }} ({{ risk_counts.low_percent }}%)
+                    </span>
+                </div>
+
+                <p class="risk-graph-summary">
+                    {{ risk_counts.total_students }} students analyzed.
+                </p>
+            </div>
         </section>
     </section>
 
     <!-- Bottom Section: Quick Actions + Risk Indicators + Student List -->
     <section id="bottom">
-        <div class="flex">
-            <div id="ablag">
-                <button class="abla">Absentees</button>
-                <button class="abla">Late Arrivals</button>
-            </div>
-            <div class="quick-actions">
-                <button class="qa">Flag Students</button>
-                <button class="qa">Request Reason</button>
-                <button class="qa">Generate Attendance Report</button>
-            </div>
-        </div>
-
         <section id="as">
             <!-- Sidebar with Risk Indicators and Live Event -->
             <aside>
-                <section id="riai">
-                    <p id="ait">Risk Indicator's (AI Assisted)</p>
-                    <div class="risk-indicator">
-                        <span class="risk-color high-risk"></span>
-                        <p><b>High-risk</b> = Attendance < 70%</p>
-                    </div>
-                    <div class="risk-indicator">
-                        <span class="risk-color emerging-risk"></span>
-                        <p><b>Emerging-risk</b> = 2 + Absences in 10 days</p>
-                    </div>
-                    <div class="risk-indicator">
-                        <span class="risk-color low-risk"></span>
-                        <p><b>Low-risk</b> = Occasional Absences</p>
-                    </div>
-                </section>
-
                 <!-- LIVE EVENT TAB -->
                 <section id="live-event-section" class="live-event-sidebar">
                     <h3>🔴 Live Event</h3>
@@ -99,56 +138,33 @@
             <!-- Main Student List -->
             <section id="list">
                 <div class="flex">
-                    <input type="text" placeholder="Search Student Name or #">
-                    <div class="umafil">
-                        <div class="labeledfilter">
-                            <p>Year:</p>
-                            <button class="filter">All</button>
-                        </div>
-                        <div class="labeledfilter">
-                            <p>Section:</p>
-                            <button class="filter">All</button>
-                        </div>
-                        <div class="labeledfilter">
-                            <p>Modality:</p>
-                            <button class="filter">All</button>
-                        </div>
-                    </div>
+                    <form method="get" 
+                          hx-get="{% url 'org-dashboard-overview' %}" 
+                          hx-target="#students" 
+                          hx-swap="innerHTML"
+                          hx-trigger="input changed delay:300ms from:find input[name='search']"
+                          class="search-form">
+                        <input type="text" 
+                               name="search" 
+                               placeholder="Search Student Name or ID..." 
+                               value="{{ search_query }}"
+                               class="student-search-input">
+                    </form>
                 </div>
 
                 <section id="student-list">
-                    <table>
-                        <tr>
-                            <th>Student Name</th>
-                            <th>Student Number</th>
-                            <th>Section Number</th>
-                            <th>Absence Type</th>
-                            <th>AI Flag</th>
-                            <th>Reason (If Known)</th>
-                        </tr>
+                    <table class="students-table">
+                        <thead>
+                            <tr>
+                                <th>Student Name</th>
+                                <th>Student Number</th>
+                                <th>AI Flag</th>
+                            </tr>
+                        </thead>
                     </table>
 
-                    <div id="students">
-                        <a href="#">
-                            <div class="student">
-                                <p>John Doe</p>
-                                <p>|</p>
-                                <p>CA202600001</p>
-                                <p>|</p>
-                                <p>LFCA111M001</p>
-                                <p>|</p>
-                                <p>Full Day</p>
-                                <p>|</p>
-                                <p>
-                                    <div class="risk-flag">
-                                        <span class="risk-color high-risk"></span>
-                                        <p><b>Chronic risk</b></p>
-                                    </div>
-                                </p>
-                                <p>|</p>
-                                <p>None</p>
-                            </div>
-                        </a>
+                    <div id="students" class="students-container">
+                        {% include 'org/overview/_student_list.html' %}
                     </div>
                 </section>
             </section>

@@ -1,0 +1,74 @@
+<!-- Event Report (HTMX partial) -->
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/base.css' %}">
+<link rel="stylesheet" href="{% static 'css/org-dashboard.css' %}">
+
+<div class="tab-content event-report-tab">
+    <div class="content-header">
+        <h2>Event Report</h2>
+        <button class="btn btn-secondary"
+                hx-get="{% url 'org-dashboard-events' %}"
+                hx-target="#content-area"
+                hx-swap="innerHTML">
+             Back to Events
+        </button>
+    </div>
+
+    <div class="event-report-header">
+        <div class="event-report-meta">
+            <h3 class="event-report-title">{{ event.title }}</h3>
+            <p class="event-report-subtitle">
+                {{ event.event_date|date:"M d, Y" }} &middot; {{ event.start_time|time:"H:i" }} - {{ event.end_time|time:"H:i" }}
+            </p>
+        </div>
+    </div>
+
+    <div class="event-report-grid">
+        <div class="event-report-card">
+            <h4>Total Check-ins</h4>
+            <p class="event-report-value">{{ total_attendees }}</p>
+        </div>
+        <div class="event-report-card">
+            <h4>Arrival Pattern</h4>
+            <div class="arrival-bar-track">
+                <div class="arrival-bar-segment early" style="width: {{ early_percent }}%;"></div>
+                <div class="arrival-bar-segment on-time" style="width: {{ on_time_percent }}%;"></div>
+                <div class="arrival-bar-segment late" style="width: {{ late_percent }}%;"></div>
+            </div>
+            <p class="event-report-caption">
+                {{ early_percent }}% early &middot; {{ on_time_percent }}% on-time &middot; {{ late_percent }}% late
+            </p>
+            <p class="event-report-caption">
+                Median arrival {{ median_label }}.
+            </p>
+        </div>
+    </div>
+
+    <div class="event-report-table-wrapper">
+        <h4>Attendee List</h4>
+        {% if attendee_rows %}
+        <table class="event-report-table">
+            <thead>
+                <tr>
+                    <th>Student Name</th>
+                    <th>Student ID</th>
+                    <th>Check-in Time</th>
+                    <th>Arrival Category</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in attendee_rows %}
+                <tr>
+                    <td>{{ row.student_name }}</td>
+                    <td>{{ row.student_id }}</td>
+                    <td>{{ row.timestamp|time:"H:i:s" }}</td>
+                    <td>{{ row.arrival_bucket }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p class="event-report-empty">No attendance records for this event yet.</p>
+        {% endif %}
+    </div>
+</div>

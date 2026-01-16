@@ -14,35 +14,75 @@
     </div>
 
     <div class="dashboard-shell">
-        <div class="welcome-box">
-            <h2>Welcome, Student!</h2>
-            <p>This is your student portal where you can check your attendance records and class information.</p>
-            <div class="status-box">
-                <strong>✓ You are logged in</strong>
-            </div>
-        </div>
-
         <div class="dashboard-grid">
-            <div class="dashboard-card">
-                <div class="icon">✅</div>
-                <h3>My Attendance</h3>
-                <p>View your attendance history</p>
-            </div>
-            <div class="dashboard-card">
-                <div class="icon">📚</div>
-                <h3>My Classes</h3>
-                <p>See your enrolled classes</p>
-            </div>
-            <div class="dashboard-card">
-                <div class="icon">👤</div>
-                <h3>Profile</h3>
-                <p>Manage your profile information</p>
-            </div>
-            <div class="dashboard-card">
-                <div class="icon">📞</div>
-                <h3>Support</h3>
-                <p>Contact technical support</p>
-            </div>
+            <section class="dashboard-card student-events-card">
+                <div class="card-header">
+                    <div>
+                        <h3>Upcoming Events</h3>
+                        <p class="card-subtitle">Stay prepared for what is coming up next.</p>
+                    </div>
+                    <span class="card-badge">{{ upcoming_events|length }}</span>
+                </div>
+                {% if upcoming_events %}
+                <div class="student-events-list">
+                    {% for event in upcoming_events %}
+                    <article class="student-event-card">
+                        <div class="student-event-status">Upcoming</div>
+                        <h4 class="student-event-title">{{ event.title }}</h4>
+                        <div class="student-event-meta">
+                            <span class="student-event-date">{{ event.event_date|date:"M d, Y" }}</span>
+                            <span class="student-event-time">{{ event.start_time|time:"H:i" }} - {{ event.end_time|time:"H:i" }}</span>
+                        </div>
+                        {% if event.description %}
+                        <p class="student-event-description">{{ event.description|truncatewords:20 }}</p>
+                        {% endif %}
+                    </article>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="empty-note">No upcoming events announced yet.</div>
+                {% endif %}
+            </section>
+
+            <section class="dashboard-card student-attendance-card">
+                <div class="card-header">
+                    <div>
+                        <h3>My Recent Attendance</h3>
+                        <p class="card-subtitle">Track the last events you joined.</p>
+                    </div>
+                    <span class="card-badge">{{ recent_events_with_status|length }}</span>
+                </div>
+                {% if recent_events_with_status %}
+                <div class="attendance-table-wrapper">
+                    <table class="attendance-table">
+                        <thead>
+                            <tr>
+                                <th>Event</th>
+                                <th>Date</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for row in recent_events_with_status %}
+                            <tr>
+                                <td>{{ row.event.title }}</td>
+                                <td>{{ row.event.event_date|date:"M d, Y" }}</td>
+                                <td>
+                                    {% if row.attended %}
+                                    <span class="status-chip status-chip-success">Attended</span>
+                                    {% else %}
+                                    <span class="status-chip status-chip-muted">No check-in recorded</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="empty-note">No past events to show yet.</div>
+                {% endif %}
+            </section>
         </div>
     </div>
 </body>

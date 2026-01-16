@@ -3,7 +3,7 @@
 <link rel="stylesheet" href="{% static 'css/base.css' %}">
 <link rel="stylesheet" href="{% static 'css/org-dashboard.css' %}">
 
-<div class="tab-content">
+<div class="tab-content events-tab">
     <div class="content-header">
         <h2>Events</h2>
         <button class="btn btn-primary"
@@ -98,7 +98,13 @@
                     <div class="event-description">{{ event.description|truncatewords:15 }}</div>
                     {% endif %}
                     <div class="event-actions">
-                        <a href="#" class="event-link">View Report</a>
+                        <a href="#"
+                           class="event-link"
+                           hx-get="{% url 'org-dashboard-event-report' event.id %}"
+                           hx-target="#content-area"
+                           hx-swap="innerHTML">
+                            View Report
+                        </a>
                     </div>
                 </div>
                 {% endfor %}

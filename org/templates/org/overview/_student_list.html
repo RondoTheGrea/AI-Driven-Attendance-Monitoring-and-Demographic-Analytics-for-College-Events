@@ -1,0 +1,26 @@
+{% if students_with_flags %}
+    {% for item in students_with_flags %}
+    <div class="student-row">
+        <div class="student-name">
+            {{ item.student.first_name }} {{ item.student.last_name }}
+        </div>
+        <div class="student-id">
+            {{ item.student.student_id }}
+        </div>
+        <div class="student-flag">
+            <div class="risk-flag">
+                <span class="risk-color {{ item.flag }}"></span>
+                <span class="risk-label">{{ item.flag_label }}</span>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+{% else %}
+    <div class="empty-student-list">
+        {% if search_query %}
+            No students found matching "{{ search_query }}"
+        {% else %}
+            No students to display yet.
+        {% endif %}
+    </div>
+{% endif %}
