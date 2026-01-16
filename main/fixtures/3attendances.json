@@ -1,0 +1,137 @@
+[
+  {
+    "model": "main.attendance",
+    "pk": 1,
+    "fields": {
+      "event": 3,
+      "student": 1,
+      "timestamp": "2026-01-17T07:00:30Z"
+    }
+  },
+  {
+    "model": "main.attendance",
+    "pk": 2,
+    "fields": {
+      "event": 3,
+      "student": 2,
+      "timestamp": "2026-01-17T07:01:00Z"
+    }
+  },
+  {
+    "model": "main.attendance",
+    "pk": 3,
+    "fields": {
+      "event": 3,
+      "student": 3,
+      "timestamp": "2026-01-17T07:01:30Z"
+    }
+  },
+  {
+    "model": "main.attendance",
+    "pk": 4,
+    "fields": {
+      "event": 3,
+      "student": 4,
+      "timestamp": "2026-01-17T07:02:00Z"
+    }
+  },
+  {
+    "model": "main.attendance",
+    "pk": 5,
+    "fields": {
+      "event": 3,
+      "student": 5,
+      "timestamp": "2026-01-17T07:02:30Z"
+    }
+  },
+  {
+    "model": "main.attendance",
+    "pk": 6,
+    "fields": {
+      "event": 3,
+      "student": 6,
+      "timestamp": "2026-01-17T07:03:00Z"
+    }
+  },
+  {
+    "model": "main.attendance",
+    "pk": 7,
+    "fields": {
+      "event": 3,
+      "student": 7,
+      "timestamp": "2026-01-17T07:03:30Z"
+    }
+  },
+  {
+    "model": "main.attendance",
+    "pk": 8,
+    "fields": {
+      "event": 3,
+      "student": 8,
+      "timestamp": "2026-01-17T07:04:00Z"
+    }
+  },
+  {
+    "model": "main.attendance",
+    "pk": 9,
+    "fields": {
+      "event": 3,
+      "student": 9,
+      "timestamp": "2026-01-17T07:04:30Z"
+    }
+  },
+  {
+    "model": "main.attendance",
+    "pk": 10,
+    "fields": {
+      "event": 3,
+      "student": 10,
+      "timestamp": "2026-01-17T07:05:00Z"
+    }
+  },
+  {
+    "model": "main.attendance",
+    "pk": 11,
+    "fields": {
+      "event": 3,
+      "student": 11,
+      "timestamp": "2026-01-17T07:00:10Z"
+    }
+  },
+  {
+    "model": "main.attendance",
+    "pk": 12,
+    "fields": {
+      "event": 3,
+      "student": 12,
+      "timestamp": "2026-01-17T07:04:50Z"
+    }
+  },
+  {
+    "model": "main.attendance",
+    "pk": 13,
+    "fields": {
+      "event": 3,
+      "student": 13,
+      "timestamp": "2026-01-17T07:02:15Z"
+    }
+  },
+  {
+    "model": "main.attendance",
+    "pk": 14,
+    "fields": {
+      "event": 3,
+      "student": 14,
+      "timestamp": "2026-01-17T07:03:45Z"
+    }
+  },
+  {
+    "model": "main.attendance",
+    "pk": 15,
+    "fields": {
+      "event": 3,
+      "student": 15,
+      "timestamp": "2026-01-17T07:01:15Z"
+    }
+  }
+]

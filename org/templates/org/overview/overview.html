@@ -11,7 +11,7 @@
 
                 {% if arrival_event %}
                 <p class="arrival-caption">
-                    Based on {{ arrival_event.title }} ({{ arrival_event.event_date|date:"M d, Y" }})
+                    Based on {{ arrival_event.title }} &bull; {{ arrival_event.event_date|date:"M d, Y" }}
                 </p>
 
                 {% if arrival_stats.total %}
@@ -23,15 +23,16 @@
 
                 <div class="arrival-legend">
                     <span class="arrival-dot early"></span>
-                    <span>Early (5+ min before start)</span>
+                    <span>Early</span>
                     <span class="arrival-dot on-time"></span>
-                    <span>On-time (within 10 min)</span>
+                    <span>On-time</span>
                     <span class="arrival-dot late"></span>
-                    <span>Late (&gt; 10 min after)</span>
+                    <span>Late</span>
                 </div>
 
                 <p class="arrival-summary">
-                    {{ arrival_stats.total }} students checked in; median arrival {{ arrival_stats.median_label }}.
+                    <strong>Median Arrival:</strong> {{ arrival_stats.median_label }}<br>
+                    {{ arrival_stats.total }} students checked in
                 </p>
                 {% else %}
                 <p class="arrival-empty">
@@ -55,9 +56,9 @@
                 <div class="risk-bar-row">
                     <div class="risk-bar-label">
                         <span class="risk-color high-risk"></span>
-                        <span>High-risk (&lt; 70% attendance)</span>
+                        <span>High-risk</span>
                     </div>
-                    <div class="risk-bar-track">
+                    <div class="risk-bar-track high-risk">
                         <div class="risk-bar-fill high-risk" style="width: {{ risk_counts.high_percent }}%;"></div>
                     </div>
                     <span class="risk-bar-value">
@@ -68,9 +69,9 @@
                 <div class="risk-bar-row">
                     <div class="risk-bar-label">
                         <span class="risk-color emerging-risk"></span>
-                        <span>Emerging-risk (2+ absences in 10 days)</span>
+                        <span>Emerging-risk</span>
                     </div>
-                    <div class="risk-bar-track">
+                    <div class="risk-bar-track emerging-risk">
                         <div class="risk-bar-fill emerging-risk" style="width: {{ risk_counts.emerging_percent }}%;"></div>
                     </div>
                     <span class="risk-bar-value">
@@ -81,9 +82,9 @@
                 <div class="risk-bar-row">
                     <div class="risk-bar-label">
                         <span class="risk-color low-risk"></span>
-                        <span>Low-risk (occasional absences)</span>
+                        <span>Low-risk</span>
                     </div>
-                    <div class="risk-bar-track">
+                    <div class="risk-bar-track low-risk">
                         <div class="risk-bar-fill low-risk" style="width: {{ risk_counts.low_percent }}%;"></div>
                     </div>
                     <span class="risk-bar-value">
@@ -137,19 +138,22 @@
 
             <!-- Main Student List -->
             <section id="list">
-                <div class="flex">
-                    <form method="get" 
-                          hx-get="{% url 'org-dashboard-overview' %}" 
-                          hx-target="#students" 
-                          hx-swap="innerHTML"
-                          hx-trigger="input changed delay:300ms from:find input[name='search']"
-                          class="search-form">
-                        <input type="text" 
-                               name="search" 
-                               placeholder="Search Student Name or ID..." 
-                               value="{{ search_query }}"
-                               class="student-search-input">
-                    </form>
+                <div class="students-header-card">
+                    <div class="students-header-row">
+                        <h3 class="students-header-title">Students</h3>
+                        <form method="get" 
+                              hx-get="{% url 'org-dashboard-overview' %}" 
+                              hx-target="#students" 
+                              hx-swap="innerHTML"
+                              hx-trigger="input changed delay:300ms from:find input[name='search']"
+                              class="search-form">
+                            <input type="text" 
+                                   name="search" 
+                                   placeholder="Search Student Name or ID..." 
+                                   value="{{ search_query }}"
+                                   class="student-search-input">
+                        </form>
+                    </div>
                 </div>
 
                 <section id="student-list">

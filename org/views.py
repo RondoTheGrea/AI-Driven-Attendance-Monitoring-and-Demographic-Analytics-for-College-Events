@@ -293,12 +293,13 @@ def org_dashboard_overview(request):
     # Load all students for this organization and compute their risk flags
     search_query = request.GET.get('search', '').strip()
     
-    # Get students linked to this org's events
+    # Primary source: all students explicitly linked to this organization
     students_list = Student.objects.filter(
-        history__event__organization=organization
-    ).distinct().order_by('last_name', 'first_name')
-    
-    # If no students found, fall back to all students with attendance records
+        organization=organization
+    ).order_by('last_name', 'first_name')
+
+    # If no students are linked to the organization (e.g., demo data),
+    # fall back to any students that have attendance records
     if not students_list.exists():
         students_list = Student.objects.filter(
             history__isnull=False

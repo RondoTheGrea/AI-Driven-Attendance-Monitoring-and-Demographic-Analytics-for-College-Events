@@ -282,9 +282,9 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 30px;
-    padding: 20px 10px 20px 10px;
-    border-bottom: 2px solid #e0e0e0;
+    margin-bottom: 8px;
+    padding: 0 0 8px 0;
+    border-bottom: 1px solid #e0e0e0;
 }
 
 .content-header h2 {
@@ -743,11 +743,12 @@ body {
 .overview-tab {
     display: flex;
     flex-direction: column;
-    gap: 0;
+    gap: 20px;
     height: 100%; /* fill available space */
     min-height: 0; /* allow inner sections to scroll instead of stretching page */
     overflow-y: auto; /* allow vertical scroll so live event sidebar is always reachable */
-    padding: 20px 10px 0 10px;
+    padding: 10px 20px 20px 20px; /* less space at the top so card sits higher */
+    background-color: #f5f7fa;
 }
 
 .overview-title {
@@ -814,19 +815,24 @@ body {
 #top {
     display: flex;
     flex-direction: row;
-    gap: 1vw;
-    margin: 1vw 0vw;
-    height: 30vh;
+    gap: 20px;
+    margin: 0;
+    height: auto;
+    min-height: 30vh;
     width: auto;
+    padding: 20px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
 #aib {
     display: flex;
-    flex: 1; /* match #graph flex so both have same width */
-    height: 30vh;
-    border-radius: 0.5vh;
-    background-color: #E9E9F3;
-    padding: 1.5vh 1.25vw;
+    flex: 1;
+    height: 100%;
+    border-radius: 8px;
+    background-color: #f8f9fa;
+    padding: 0;
     align-items: stretch;
     justify-content: flex-start;
     color: #333;
@@ -836,13 +842,16 @@ body {
 /* Arrival Pattern Card (Graph 1) */
 .arrival-card {
     width: 100%;
-    background-color: #ffffff;
-    border-radius: 0.5vh;
-    padding: 1.25vh 1.25vw;
+    background-color: #f3f4f6;
+    border-radius: 8px;
+    padding: 20px;
     display: flex;
     flex-direction: column;
     gap: 0.6rem;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.07);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+    border: 1px solid #4b5563; /* dark outline, not too thick */
+    box-sizing: border-box;
+    overflow: hidden;
 }
 
 .arrival-title {
@@ -857,6 +866,12 @@ body {
     margin: 0;
     font-size: 0.8rem;
     color: #555;
+}
+
+.arrival-summary {
+    margin-top: 0.5rem;
+    padding-top: 0.5rem;
+    border-top: 1px solid #e5e7eb;
 }
 
 .arrival-bar-track {
@@ -913,25 +928,30 @@ body {
 }
 
 #graph {
-    height: 30vh;
-    flex: 1; /* explicit to mirror #aib */
+    height: 100%;
+    flex: 1;
     min-width: 200px;
-    border-radius: 0.5vh;
-    border: 0.1vw solid black;
-    background-color: #ffffff;
+    border-radius: 8px;
+    border: 1px solid #4b5563; /* dark outline, not too thick */
+    background-color: #f3f4f6;
     display: flex;
     align-items: stretch;
     justify-content: flex-start;
-    padding: 1.5vh 1.25vw;
+    padding: 20px;
+    box-sizing: border-box;
+    overflow: hidden;
 }
 
-/* Bottom Section */
 #bottom {
     display: flex;
     flex-direction: column;
-    flex: 1;          /* take remaining space under #top/filter/title */
-    min-height: 0;    /* enable internal scroll containers */
+    flex: 1;
+    min-height: 0;
     gap: 0;
+    padding: 20px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
 .flex {
@@ -997,9 +1017,9 @@ body {
     padding-top: 0;
     display: flex;
     flex-direction: row;
-    gap: 1vw;
+    gap: 20px;
     width: 100%;
-    flex: 1;          /* share bottom height with list/sidebar */
+    flex: 1;
     min-height: 0;
 }
 
@@ -1106,13 +1126,14 @@ aside {
 
 /* Live Event Sidebar */
 .live-event-sidebar {
-    border-radius: 0.5vh;
-    border: 0.2vh solid #000000;
+    border-radius: 8px;
+    border: 1px solid #e0e0e0;
     background-color: #ffffff;
-    padding: 5vh 1vw;
+    padding: 20px;
     height: 100%;
     max-height: calc(100vh - 350px);
     overflow-y: auto;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
 }
 
 .live-event-sidebar h3 {
@@ -1165,10 +1186,11 @@ aside {
     flex-direction: column;
     flex: 1;
     max-height: 100%;
-    border: 0.2vh solid #000000;
-    border-radius: 1vw;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
     background-color: #ffffff;
     overflow: hidden;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
 }
 
 table {
@@ -1206,8 +1228,8 @@ table th {
 
 /* New Student List Styles */
 .search-form {
-    width: 100%;
-    margin-bottom: 1.5rem;
+    width: auto;
+    margin: 0;
 }
 
 .student-search-input {
@@ -1218,6 +1240,37 @@ table th {
     border-radius: 8px;
     transition: all 0.3s ease;
     background: white;
+}
+
+.students-header-card {
+    width: 100%;
+    margin-bottom: 0.75rem;
+    padding: 8px 12px;
+    border-radius: 8px;
+    border: 1px solid #e0e0e0;
+    background-color: #ffffff;
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.16);
+    box-sizing: border-box;
+}
+
+.students-header-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+.students-header-title {
+    margin: 0;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #111827;
+}
+
+.students-header-row .search-form {
+    flex: 1;
+    display: flex;
+    justify-content: flex-end;
 }
 
 .student-search-input:focus {
@@ -1376,13 +1429,17 @@ table th {
     flex: 1;
     height: 0.7rem;
     border-radius: 999px;
-    background-color: #f1f1f5;
+    background-color: #ffffff; /* base is white, we add a tinted line underneath */
+    border: 1px solid #e5e7eb;
     overflow: hidden;
+    position: relative;
 }
 
 .risk-bar-fill {
     height: 100%;
     border-radius: 999px;
+    position: relative;
+    z-index: 1; /* sit above the base-colored line */
 }
 
 .risk-bar-fill.high-risk {
@@ -1394,6 +1451,29 @@ table th {
 }
 
 .risk-bar-fill.low-risk {
+    background-color: rgb(99, 202, 73);
+}
+
+/* Base-colored full-length lines for each risk type */
+.risk-bar-track.high-risk::before,
+.risk-bar-track.emerging-risk::before,
+.risk-bar-track.low-risk::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    opacity: 0.25;
+}
+
+.risk-bar-track.high-risk::before {
+    background-color: rgb(202, 92, 92);
+}
+
+.risk-bar-track.emerging-risk::before {
+    background-color: rgb(231, 216, 79);
+}
+
+.risk-bar-track.low-risk::before {
     background-color: rgb(99, 202, 73);
 }
 

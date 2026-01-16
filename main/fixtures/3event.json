@@ -1,0 +1,16 @@
+[
+  {
+    "model": "main.event",
+    "pk": 3,
+    "fields": {
+      "organization": 1,
+      "title": "AI Week Event",
+      "description": "AN ACADEMIC AND INDUSTRY DRIVEN EVENT AIMED AT CULTIVATING AI LITERACY, STRENGTHENING DIGITAL COMPENTENCIES, AND EMPOWERING STUDENTS WITH TECHNOLOGY SKILLS NECESSARY FOR MODERN CAREERS.",
+      "event_date": "2026-01-17",
+      "start_time": "07:00:00",
+      "end_time": "12:00:00",
+      "is_active": true,
+      "created_at": "2026-01-01T00:00:00Z"
+    }
+  }
+]
