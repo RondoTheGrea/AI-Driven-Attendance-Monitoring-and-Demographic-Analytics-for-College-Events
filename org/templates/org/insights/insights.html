@@ -125,6 +125,8 @@
             flex-direction: column;
             gap: 16px;
             background: linear-gradient(to bottom, #fafbff 0%, #ffffff 100%);
+            max-height: calc(100vh - 260px); /* ensure scrollable area even if parents mis-size */
+            box-sizing: border-box;
         }
 
         /* Message Styles */
